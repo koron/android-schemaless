@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import net.kaoriya.schemaless_database.SchemalessDatabase;
+import net.kaoriya.schemaless_database.SchemalessFactory;
 
 public class SchemalessSampleActivity extends Activity
 {
@@ -16,6 +17,9 @@ public class SchemalessSampleActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        this.database = new SchemalessDatabase();
+        SchemalessFactory factory = new SchemalessFactory(this,
+                "schemaless.db");
+        this.database = factory.newDatabase();
     }
+
 }
