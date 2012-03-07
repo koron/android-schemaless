@@ -13,7 +13,7 @@ public final class SchemalessFactory implements Schemaless {
     }
 
     public SchemalessDatabase newDatabase() {
-        return null;
+        return new SchemalessDatabase(this.context, this.name);
     }
 
 }
