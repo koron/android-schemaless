@@ -1,0 +1,3 @@
+# Easy Schemaless Database for Android
+
+This is experimental implementation of schemaless database for Android.
