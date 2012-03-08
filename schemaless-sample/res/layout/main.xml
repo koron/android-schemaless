@@ -10,4 +10,10 @@
     android:layout_height="wrap_content" 
     android:text="Hello World, SchemalessSampleActivity"
     />
+  <Button
+    android:id="@+id/DumpCV"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Dump ContentValues"
+    />
 </LinearLayout>
