@@ -197,8 +197,9 @@ public final class SchemalessDatabase implements Schemaless {
 
     private static long insertRechdr(SQLiteDatabase db, long time)
     {
-        // TODO:
-        return 0;
+        ContentValues cv = new ContentValues();
+        cv.put("utime", time);
+        return db.insert(TABLE_RECHDR, null, cv);
     }
 
     private static boolean updateRechdr(
@@ -206,13 +207,17 @@ public final class SchemalessDatabase implements Schemaless {
             long recId,
             long time)
     {
-        // TODO:
-        return false;
+        ContentValues cv = new ContentValues();
+        cv.put("utime", time);
+        int count = db.update(TABLE_RECHDR, cv, "_id=?",
+                new String[] { Long.toString(recId) });
+        return (count == 1) ? true : false;
     }
 
     private static void deleteRechdr(SQLiteDatabase db, long recId)
     {
-        // TODO:
+        db.delete(TABLE_RECHDR, "_id=?",
+                new String[] { Long.toString(recId) });
     }
 
     private final static String[] COLUMNS_GET_RECHDR = { "utime" };
