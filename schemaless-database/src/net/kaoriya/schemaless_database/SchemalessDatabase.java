@@ -93,7 +93,7 @@ public final class SchemalessDatabase implements Schemaless {
         try {
             long now = System.currentTimeMillis();
             long recId = insertRechdr(db, now);
-            if (recId > 0) {
+            if (recId >= 0) {
                 insertPropval(db, recId, cv, now);
             }
             db.setTransactionSuccessful();
@@ -143,10 +143,21 @@ public final class SchemalessDatabase implements Schemaless {
         }
     }
 
-    private static long getField(SQLiteDatabase db, String name)
+    private final static String[] COLUMNS_GET_FIELD = { "_id" };
+
+    private static Long getField(SQLiteDatabase db, String name)
     {
-        // TODO:
-        return 0;
+        Cursor c = db.query(TABLE_FIELD, COLUMNS_GET_FIELD, "name=?",
+                new String[] { name }, null, null, null, "1");
+        try {
+            Long retval = null;
+            if (c.moveToNext()) {
+                retval = Long.valueOf(c.getLong(0));
+            }
+            return retval;
+        } finally {
+            c.close();
+        }
     }
 
     private final static String[] COLUMNS_GET_FIELD_NAME = { "name" };
@@ -167,10 +178,21 @@ public final class SchemalessDatabase implements Schemaless {
         }
     }
 
-    private static long assureField(SQLiteDatabase db, String name)
+    private static Long assureField(SQLiteDatabase db, String name)
     {
-        // TODO:
-        return 0;
+        db.beginTransaction();
+        try {
+            Long retval = getField(db, name);
+            if (retval == null) {
+                ContentValues cv = new ContentValues();
+                cv.put("name", name);
+                long id = db.insert(TABLE_FIELD, null, cv);
+                retval = (id >= 0) ? Long.valueOf(id) : null;
+            }
+            return retval;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     private static long insertRechdr(SQLiteDatabase db, long time)
@@ -237,9 +259,9 @@ public final class SchemalessDatabase implements Schemaless {
             if (v != null) {
                 assurePropval(db, recId, assureField(db, k), v, now);
             } else {
-                long fieldId = getField(db, k);
-                if (fieldId > 0) {
-                    deletePropval(db, recId, fieldId);
+                Long fieldId = getField(db, k);
+                if (fieldId != null) {
+                    deletePropval(db, recId, fieldId.longValue());
                 }
             }
         }
@@ -248,10 +270,14 @@ public final class SchemalessDatabase implements Schemaless {
     private static void assurePropval(
             SQLiteDatabase db,
             long recId,
-            long fieldId,
+            Long fieldId,
             Object value,
             long now)
     {
+        if (fieldId == null) {
+            return;
+        }
+
         // TODO:
     }
 
