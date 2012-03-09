@@ -279,7 +279,7 @@ public final class SchemalessDatabase implements Schemaless {
             Object value,
             long now)
     {
-        if (fieldId == null) {
+        if (fieldId == null || value == null) {
             return;
         }
 
@@ -288,8 +288,9 @@ public final class SchemalessDatabase implements Schemaless {
 
     private static void deletePropval(SQLiteDatabase db, long recId)
     {
-        // TODO:
         // should be implemented by trigger?
+        db.delete(TABLE_PROPVAL, "rec_id=?",
+                new String[] { Long.toString(recId) });
     }
 
     private static void deletePropval(
@@ -297,7 +298,10 @@ public final class SchemalessDatabase implements Schemaless {
             long recId,
             long fieldId)
     {
-        // TODO:
+        db.delete(TABLE_PROPVAL, "rec_id=? AND fld_id=?",
+                new String[] {
+                    Long.toString(recId), Long.toString(fieldId)
+                });
     }
 
     private final static String[] COLUMNS_GET_PROPVAL = {
