@@ -1,6 +1,7 @@
 package net.kaoriya.schemaless_database;
 
 import java.util.Map;
+import java.util.HashMap;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -52,6 +53,21 @@ public final class SchemalessDatabase implements Schemaless {
     public final static int VALTYPE_BYTEARRAY   = 6;
     public final static int VALTYPE_FLOAT       = 7;
     public final static int VALTYPE_DOUBLE      = 8;
+
+    public final static Map<Class,Integer> VALUE_TYPEMAP;
+
+    static {
+        VALUE_TYPEMAP = new HashMap<Class,Integer>();
+        VALUE_TYPEMAP.put(Boolean.class, VALTYPE_BOOL);
+        VALUE_TYPEMAP.put(Byte.class, VALTYPE_BYTE);
+        VALUE_TYPEMAP.put(Short.class, VALTYPE_SHORT);
+        VALUE_TYPEMAP.put(Integer.class, VALTYPE_INT);
+        VALUE_TYPEMAP.put(Long.class, VALTYPE_LONG);
+        VALUE_TYPEMAP.put(String.class, VALTYPE_STRING);
+        VALUE_TYPEMAP.put(byte[].class, VALTYPE_BYTEARRAY);
+        VALUE_TYPEMAP.put(Float.class, VALTYPE_FLOAT);
+        VALUE_TYPEMAP.put(Double.class, VALTYPE_DOUBLE);
+    }
 
     /**
      * Setup schema.
@@ -283,7 +299,57 @@ public final class SchemalessDatabase implements Schemaless {
             return;
         }
 
-        // TODO:
+        Integer valueType = VALUE_TYPEMAP.get(value.getClass());
+        if (valueType == null) {
+            return;
+        }
+
+        // Setup content values.
+        ContentValues cv = new ContentValues();
+        cv.put("rec_id", recId);
+        cv.put("fld_id", fieldId);
+        cv.put("utime", now);
+        cv.put("val_type", valueType);
+        cv.putNull("int_val");
+        cv.putNull("text_val");
+        cv.putNull("real_val");
+
+        // Set value.
+        switch (valueType.intValue()) {
+        case VALTYPE_BOOL:
+            cv.put("int_val", (Boolean)value);
+            break;
+        case VALTYPE_BYTE:
+            cv.put("int_val", (Byte)value);
+            break;
+        case VALTYPE_SHORT:
+            cv.put("int_val", (Short)value);
+            break;
+        case VALTYPE_INT:
+            cv.put("int_val", (Integer)value);
+            break;
+        case VALTYPE_LONG:
+            cv.put("int_val", (Long)value);
+            break;
+        case VALTYPE_STRING:
+            cv.put("text_val", (String)value);
+            break;
+        case VALTYPE_BYTEARRAY:
+            cv.put("text_val", (byte[])value);
+            break;
+        case VALTYPE_FLOAT:
+            cv.put("real_val", (Float)value);
+            break;
+        case VALTYPE_DOUBLE:
+            cv.put("real_val", (Float)value);
+            break;
+        default:
+            // FIXME: unknown valueType error.
+            break;
+        }
+
+        db.insertWithOnConflict(TABLE_RECHDR, null, cv,
+                SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     private static void deletePropval(SQLiteDatabase db, long recId)
@@ -370,7 +436,7 @@ public final class SchemalessDatabase implements Schemaless {
             cv.put(name, cursor.getDouble(4));
             break;
         default:
-            // FIXME: unknown valtype error.
+            // FIXME: unknown valueType error.
             break;
         }
 
