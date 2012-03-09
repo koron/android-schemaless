@@ -44,6 +44,7 @@ public class SchemalessSampleActivity
     private void dumpContentValues() {
         Log.v(TAG, "#dumpContentValues");
         ContentValues cv = new ContentValues();
+
         cv.put("byte", Byte.valueOf((byte)0x12));
         cv.put("int", Integer.valueOf(1234));
         cv.put("float", Float.valueOf(12.34f));
