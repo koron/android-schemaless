@@ -32,7 +32,7 @@ public final class SchemalessDatabase implements Schemaless {
         };
     }
 
-    public long insertRecord(ContentValues cv)
+    public long insert(ContentValues cv)
     {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
@@ -45,7 +45,7 @@ public final class SchemalessDatabase implements Schemaless {
         }
     }
 
-    public boolean updateRecord(long recId, ContentValues cv)
+    public boolean update(long recId, ContentValues cv)
     {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
@@ -58,7 +58,7 @@ public final class SchemalessDatabase implements Schemaless {
         }
     }
 
-    public void deleteRecord(long recId)
+    public void delete(long recId)
     {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
@@ -71,7 +71,7 @@ public final class SchemalessDatabase implements Schemaless {
         }
     }
 
-    public ContentValues selectRecord(long recId)
+    public ContentValues select(long recId)
     {
         SQLiteDatabase db = getReadableDatabase();
         return getRecord(db, recId);
