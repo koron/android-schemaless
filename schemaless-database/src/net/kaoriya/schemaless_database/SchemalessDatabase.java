@@ -32,8 +32,65 @@ public final class SchemalessDatabase implements Schemaless {
         };
     }
 
+    public long insertRecord(ContentValues cv)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            long recId = insertRecord(db, cv);
+            db.setTransactionSuccessful();
+            return recId;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public boolean updateRecord(long recId, ContentValues cv)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            boolean retval = updateRecord(db, recId, cv);
+            db.setTransactionSuccessful();
+            return retval;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public void deleteRecord(long recId)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            deleteRecord(db, recId);
+            db.setTransactionSuccessful();
+            return;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public ContentValues selectRecord(long recId)
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        return getRecord(db, recId);
+    }
+
     public void close() {
         this.openHelper.close();
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+
+    private SQLiteDatabase getReadableDatabase()
+    {
+        return this.openHelper.getReadableDatabase();
+    }
+
+    private SQLiteDatabase getWritableDatabase()
+    {
+        return this.openHelper.getWritableDatabase();
     }
 
     ////////////////////////////////////////////////////////////////////////
