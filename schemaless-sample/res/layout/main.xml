@@ -5,15 +5,52 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
   >
-  <TextView  
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="horizontal"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  >
+
+  <Button
+    android:id="@+id/AddRecord"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="Hello World, SchemalessSampleActivity"
+    android:layout_weight="1"
+    android:text="Add"
     />
+
+  <Button
+    android:id="@+id/RemoveRecord"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:layout_weight="1"
+    android:text="Remove"
+    />
+
   <Button
     android:id="@+id/DumpCV"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="Dump ContentValues"
+    android:layout_weight="1"
+    android:text="Dump"
     />
+
+</LinearLayout>
+
+<ListView
+  android:id="@+id/android:list"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  />
+
+<TextView
+  android:id="@+id/android:empty"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:gravity="center|center_vertical"
+  android:text="No records"
+  />
+
 </LinearLayout>

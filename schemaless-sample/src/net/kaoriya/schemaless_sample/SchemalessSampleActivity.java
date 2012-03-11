@@ -2,7 +2,7 @@ package net.kaoriya.schemaless_sample;
 
 import java.util.Map;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +12,7 @@ import net.kaoriya.schemaless_database.SchemalessDatabase;
 import net.kaoriya.schemaless_database.SchemalessFactory;
 
 public class SchemalessSampleActivity
-    extends Activity
+    extends ListActivity
     implements View.OnClickListener
 {
     public final static String TAG = "SCHEMALESS";
@@ -29,7 +29,17 @@ public class SchemalessSampleActivity
         SchemalessFactory factory = new SchemalessFactory(this,
                 "schemaless.db");
         this.database = factory.newDatabase();
+
         findViewById(R.id.DumpCV).setOnClickListener(this);
+        findViewById(R.id.AddRecord).setOnClickListener(this);
+        findViewById(R.id.RemoveRecord).setOnClickListener(this);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        this.database.close();
     }
 
     @Override
@@ -37,6 +47,12 @@ public class SchemalessSampleActivity
         switch (v.getId()) {
         case R.id.DumpCV:
             dumpContentValues();
+            break;
+        case R.id.AddRecord:
+            addRecord();
+            break;
+        case R.id.RemoveRecord:
+            removeRecord();
             break;
         }
     }
@@ -65,6 +81,23 @@ public class SchemalessSampleActivity
             }
             Log.v(TAG, String.format("  #%1$d \"%2$s\" %3$s", index, k, type));
         }
+    }
+
+    private void addRecord() {
+        Log.v(TAG, "#addRecord");
+
+        // TODO:
+
+        /*
+        ContentValues cv = new ContentValues();
+        long id = database.insert(cv);
+        Log.v(TAG, "  insert()=" + id);
+        */
+    }
+
+    private void removeRecord() {
+        Log.v(TAG, "#removeRecord");
+        // TODO:
     }
 
 }
