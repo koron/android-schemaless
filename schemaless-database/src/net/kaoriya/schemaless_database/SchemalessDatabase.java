@@ -1,7 +1,9 @@
 package net.kaoriya.schemaless_database;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -113,6 +115,8 @@ public final class SchemalessDatabase implements Schemaless {
 
     public final static Map<Class,Integer> VALUE_TYPEMAP;
 
+    public final static Set<String> SUPPRESSED_KEYS;
+
     static {
         VALUE_TYPEMAP = new HashMap<Class,Integer>();
         VALUE_TYPEMAP.put(Boolean.class, VALTYPE_BOOL);
@@ -124,6 +128,10 @@ public final class SchemalessDatabase implements Schemaless {
         VALUE_TYPEMAP.put(byte[].class, VALTYPE_BYTEARRAY);
         VALUE_TYPEMAP.put(Float.class, VALTYPE_FLOAT);
         VALUE_TYPEMAP.put(Double.class, VALTYPE_DOUBLE);
+
+        SUPPRESSED_KEYS = new HashSet<String>();
+        SUPPRESSED_KEYS.add("_id");
+        SUPPRESSED_KEYS.add("_utime");
     }
 
     /**
@@ -319,6 +327,10 @@ public final class SchemalessDatabase implements Schemaless {
     {
         for (Map.Entry<String,Object> value : cv.valueSet()) {
             String k = value.getKey();
+            if (SUPPRESSED_KEYS.contains(k)) {
+                continue;
+            }
+
             Object v = value.getValue();
             if (v != null) {
                 assurePropval(db, recId, assureField(db, k), v, now);
@@ -334,6 +346,10 @@ public final class SchemalessDatabase implements Schemaless {
     {
         for (Map.Entry<String,Object> value : cv.valueSet()) {
             String k = value.getKey();
+            if (SUPPRESSED_KEYS.contains(k)) {
+                continue;
+            }
+
             Object v = value.getValue();
             if (v != null) {
                 assurePropval(db, recId, assureField(db, k), v, now);
