@@ -73,11 +73,25 @@ public final class SchemalessDatabase implements Schemaless {
         }
     }
 
-    public ContentValues select(long recId)
+    public ContentValues selectOne(long recId)
     {
         SQLiteDatabase db = getReadableDatabase();
         return getRecord(db, recId);
     }
+
+    public SchemalessCursor select(int offset)
+    {
+        return selectRecords(getReadableDatabase(), offset);
+    }
+
+    /*
+    public Iterator<Long> select(int offset)
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        // TODO:
+        return null;
+    }
+    */
 
     public void close() {
         this.openHelper.close();
@@ -102,6 +116,7 @@ public final class SchemalessDatabase implements Schemaless {
     public final static String TABLE_PROPVAL = "propval";
 
     public final static String COLUMN_ID = "_id";
+    public final static String COLUMN_UTIME = "_utime";
 
     public final static int VALTYPE_BOOL        = 0;
     public final static int VALTYPE_BYTE        = 1;
@@ -130,8 +145,8 @@ public final class SchemalessDatabase implements Schemaless {
         VALUE_TYPEMAP.put(Double.class, VALTYPE_DOUBLE);
 
         SUPPRESSED_KEYS = new HashSet<String>();
-        SUPPRESSED_KEYS.add("_id");
-        SUPPRESSED_KEYS.add("_utime");
+        SUPPRESSED_KEYS.add(COLUMN_ID);
+        SUPPRESSED_KEYS.add(COLUMN_UTIME);
     }
 
     /**
@@ -214,7 +229,7 @@ public final class SchemalessDatabase implements Schemaless {
         }
     }
 
-    private static ContentValues getRecord(SQLiteDatabase db, long recId)
+    static ContentValues getRecord(SQLiteDatabase db, long recId)
     {
         Long utime = getRechdr(db, recId);
         if (utime == null) {
@@ -225,7 +240,20 @@ public final class SchemalessDatabase implements Schemaless {
         }
     }
 
-    private final static String[] COLUMNS_GET_FIELD = { "_id" };
+    private final static String[] COLUMNS_SELECT_RECORDS = {
+        COLUMN_ID,
+        COLUMN_UTIME
+    };
+
+    private SchemalessCursor selectRecords(SQLiteDatabase db, int offset)
+    {
+        Cursor cursor = db.query(TABLE_RECHDR, COLUMNS_SELECT_RECORDS,
+                null, null, null, null, "_utime DESC", null);
+        cursor.moveToPosition(offset - 1);
+        return new SimpleCursor(db, cursor);
+    }
+
+    private final static String[] COLUMNS_GET_FIELD = { COLUMN_ID };
 
     private static Long getField(SQLiteDatabase db, String name)
     {
