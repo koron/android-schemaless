@@ -236,7 +236,10 @@ public final class SchemalessDatabase implements Schemaless {
             return null;
         } else {
             // FIXME: add "_id" and "_utime" keys to return ContentValues.
-            return getPropvals(db, recId, new ContentValues());
+            ContentValues cv = getPropvals(db, recId, new ContentValues());
+            cv.put(COLUMN_ID, recId);
+            cv.put(COLUMN_UTIME, utime);
+            return cv;
         }
     }
 
